@@ -9,7 +9,7 @@ import com.klef.agri_app.model.student;
 public class StuController {
 	@GetMapping("/student")
 	public student getstudent() {
-		student stu=new student(8, "pranavi", "Pratap", 100000000);
+		student stu=new student(8, "pranavi", "Lakshmi", 100000000);
 		return stu;
 		
 	}
