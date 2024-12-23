@@ -3,10 +3,10 @@ os: linux
 
 hooks:
   ApplicationStop:
-    - location: scripts/stop_application.sh
+    - location: scripts/stop_instance.sh
       timeout: 300
       runas: root
   AfterInstall:
-    - location: scripts/start_application.sh
+    - location: scripts/start_instance.sh
       timeout: 300
       runas: root
