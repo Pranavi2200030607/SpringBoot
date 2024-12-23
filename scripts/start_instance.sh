@@ -5,6 +5,22 @@ set -e
 # Define the repository directory name
 REPO_DIR="SpringBoot"
 
+# Function to install Maven
+install_maven() {
+    echo "Checking if Maven is installed..."
+    if ! command -v mvn &> /dev/null; then
+        echo "Maven is not installed. Installing Maven..."
+        sudo apt update -y
+        sudo apt install -y maven
+        echo "Maven installed successfully."
+    else
+        echo "Maven is already installed."
+    fi
+}
+
+# Install Maven
+install_maven
+
 # Check if the directory already exists
 if [ -d "$REPO_DIR" ]; then
     echo "Directory $REPO_DIR already exists. Removing it..."
