@@ -2,8 +2,31 @@
 
 set -e
 
-# Define the repository directory name
+# Variables
+REPO_URL="https://github.com/Pranavi2200030607/SpringBoot.git"
 REPO_DIR="SpringBoot"
+JAVA_VERSION="17"
+JAR_FILE="target/Ecommerce-0.0.1-SNAPSHOT.jar"
+
+# Function to install Java 17
+install_java() {
+    echo "Checking if Java $JAVA_VERSION is installed..."
+    if ! java -version 2>&1 | grep -q "$JAVA_VERSION"; then
+        echo "Java $JAVA_VERSION is not installed. Installing..."
+        sudo apt update -y
+        sudo apt install -y openjdk-17-jdk
+        echo "Java $JAVA_VERSION installed successfully."
+    else
+        echo "Java $JAVA_VERSION is already installed."
+    fi
+
+    # Set JAVA_HOME
+    JAVA_HOME_PATH=$(update-alternatives --query java | grep "Value:" | awk '{print $2}')
+    echo "Setting JAVA_HOME to $JAVA_HOME_PATH"
+    export JAVA_HOME="$JAVA_HOME_PATH"
+    export PATH="$JAVA_HOME/bin:$PATH"
+    echo "JAVA_HOME is set to $JAVA_HOME"
+}
 
 # Function to install Maven
 install_maven() {
@@ -18,18 +41,19 @@ install_maven() {
     fi
 }
 
-# Install Maven
+# Install Java and Maven
+install_java
 install_maven
 
-# Check if the directory already exists
+# Remove existing repository if it exists
 if [ -d "$REPO_DIR" ]; then
     echo "Directory $REPO_DIR already exists. Removing it..."
     rm -rf "$REPO_DIR"
 fi
 
-# Clone the Spring Boot project repository
-echo "Cloning the Spring Boot project repository..."
-git clone https://github.com/Pranavi2200030607/SpringBoot.git
+# Clone the repository
+echo "Cloning the repository from $REPO_URL..."
+git clone "$REPO_URL"
 
 # Navigate to the repository directory
 cd "$REPO_DIR"
@@ -47,12 +71,11 @@ fi
 echo "Contents of the Ecommerce directory:"
 ls -l
 
-# Build the Spring Boot application using Maven
+# Build the project using Maven
 echo "Building the project with Maven..."
 mvn clean install
 
 # Verify if the JAR file exists in the target directory
-JAR_FILE="target/Ecommerce-0.0.1-SNAPSHOT.jar"
 if [ -f "$JAR_FILE" ]; then
     echo "Build successful. Running the application..."
     # Run the Spring Boot application on port 8000
