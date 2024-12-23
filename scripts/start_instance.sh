@@ -5,64 +5,52 @@ set -e
 # Variables
 REPO_URL="https://github.com/Pranavi2200030607/SpringBoot.git"
 REPO_DIR="SpringBoot"
-JAVA_VERSION="17"
+PROJECT_DIR="$REPO_DIR/Ecommerce"
 JAR_FILE="target/Ecommerce-0.0.1-SNAPSHOT.jar"
 
-# Install Java and Maven
-install_java_and_maven() {
-    echo "Checking if Java $JAVA_VERSION is installed..."
-    if ! java -version 2>&1 | grep -q "$JAVA_VERSION"; then
-        echo "Installing Java $JAVA_VERSION..."
-        sudo apt update -y
-        sudo apt install -y openjdk-17-jdk
-    fi
-    export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
-    export PATH="$JAVA_HOME/bin:$PATH"
-
-    echo "Checking if Maven is installed..."
-    if ! command -v mvn &> /dev/null; then
-        echo "Installing Maven..."
-        sudo apt install -y maven
-    fi
-    echo "Java and Maven are set up."
-}
-
 # Clone the repository if not already present
-clone_repo() {
-    if [ -d "$REPO_DIR" ]; then
-        echo "Repository $REPO_DIR already exists. Pulling latest changes..."
-        cd "$REPO_DIR"
-        git pull
-    else
-        echo "Cloning repository..."
-        git clone "$REPO_URL"
-        cd "$REPO_DIR"
-    fi
-}
+if [ ! -d "$REPO_DIR" ]; then
+    git clone "$REPO_URL"
+fi
 
-# Build the project if necessary
-build_project() {
-    if [ -f "$JAR_FILE" ]; then
-        echo "Build artifact $JAR_FILE already exists. Skipping build."
-    else
-        echo "Building the project with Maven..."
-        mvn clean install -DskipTests
-    fi
-}
+# Navigate to the project directory
+if [ -d "$PROJECT_DIR" ]; then
+    cd "$PROJECT_DIR"
+else
+    echo "Error: Project directory $PROJECT_DIR does not exist."
+    exit 1
+fi
 
-# Run the application if not already running
-run_application() {
-    if pgrep -f "$JAR_FILE" > /dev/null; then
-        echo "Application is already running."
-    else
-        echo "Starting the application..."
-        nohup java -jar "$JAR_FILE" --server.port=8000 &> application.log &
-        echo "Application started. Logs are being written to application.log."
-    fi
-}
+# Ensure pom.xml exists
+if [ ! -f "pom.xml" ]; then
+    echo "Error: pom.xml not found in $PROJECT_DIR."
+    exit 1
+fi
 
-# Main script logic
-install_java_and_maven
-clone_repo
-build_project
-run_application
+# Build the project
+mvn clean install -DskipTests
+# Check if the build was successful
+if [ $? -ne 0 ]; then
+    echo "Error: Maven build failed."
+    exit 1
+fi
+
+# Verify if the JAR file exists
+if [ ! -f "$JAR_FILE" ]; then
+    echo "Error: JAR file $JAR_FILE not found. Build may have failed."
+    exit 1
+fi
+
+# Run the Spring Boot application
+echo "Running the Spring Boot application..."
+nohup java -jar "$JAR_FILE" --server.port=8000 > application.log 2>&1 &
+
+# Check if the application started successfully
+if [ $? -eq 0 ]; then
+    echo "Application started successfully. Logs are being written to application.log."
+else
+    echo "Error: Failed to start the application."
+    exit 1
+fi
+
+echo "Application is running on port 8000."
