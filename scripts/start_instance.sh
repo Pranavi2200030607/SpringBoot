@@ -5,9 +5,6 @@ set -e
 echo "Cloning the Spring Boot project repository..."
 git clone https://github.com/Pranavi2200030607/SpringBoot.git
 
-# Navigate to the repository
-cd SpringBoot
-
 # Show the full directory structure
 echo "Full directory structure:"
 tree
