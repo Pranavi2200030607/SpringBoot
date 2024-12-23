@@ -6,7 +6,7 @@ set -e
 git clone https://github.com/Pranavi2200030607/SpringBoot.git
 
 # Navigate to the project directory
-cd SpringBoot
+cd ..
 cd Ecommerce
 
 # Build the Spring Boot application using Maven
