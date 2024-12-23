@@ -52,5 +52,4 @@ else
     echo "Error: Failed to start the application."
     exit 1
 fi
-
 echo "Application is running on port 8000."
