@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-
 # Variables
 REPO_URL="https://github.com/Pranavi2200030607/SpringBoot.git"
 REPO_DIR="SpringBoot"
@@ -40,7 +39,6 @@ if [ ! -f "$JAR_FILE" ]; then
     echo "Error: JAR file $JAR_FILE not found. Build may have failed."
     exit 1
 fi
-
 # Run the Spring Boot application
 echo "Running the Spring Boot application..."
 nohup java -jar "$JAR_FILE" --server.port=8000 > application.log 2>&1 &
