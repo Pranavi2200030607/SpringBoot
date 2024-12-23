@@ -20,8 +20,8 @@ install_java() {
         echo "Java $JAVA_VERSION is already installed."
     fi
 
-    # Set JAVA_HOME
-    JAVA_HOME_PATH=$(update-alternatives --query java | grep "Value:" | awk '{print $2}')
+    # Set JAVA_HOME to JDK root directory
+    JAVA_HOME_PATH="/usr/lib/jvm/java-17-openjdk-amd64"
     echo "Setting JAVA_HOME to $JAVA_HOME_PATH"
     export JAVA_HOME="$JAVA_HOME_PATH"
     export PATH="$JAVA_HOME/bin:$PATH"
